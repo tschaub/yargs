@@ -111,8 +111,12 @@ function Argv (processArgs, cwd) {
     return self
   }
 
-  self.command = function (cmd, description, fn) {
-    usage.command(cmd, description)
+  self.command = function (cmd, description, fn, hidden) {
+    if (typeof fn === 'boolean') {
+      hidden = fn
+      fn = null
+    }
+    if (!hidden) usage.command(cmd, description)
     if (fn) commandHandlers[cmd] = fn
     return self
   }
@@ -366,7 +370,7 @@ function Argv (processArgs, cwd) {
     // register the completion command.
     completionCommand = cmd || 'completion'
     completionOpt = completion.completionKey
-    self.command(completionCommand, desc || 'generate bash completion script')
+    self.command(completionCommand, desc || 'generate bash completion script', true)
 
     // a function can be provided
     if (fn) completion.registerFunction(fn)
